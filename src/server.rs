@@ -1,41 +1,22 @@
-use tonic::{transport::Server, Request, Response, Status};
+use tonic::{transport::Server};
 
 use auth::login_server::{Login, LoginServer};
-use auth::{LoginRequest, LoginResponse};
+
+use auth::login::LoginService as LoginService;
 
 pub mod auth {
   tonic::include_proto!("auth");
-}
-
-#[derive(Debug, Default)]
-pub struct LoginService {}
-
-#[tonic::async_trait]
-impl Login for LoginService {
-	async fn test(
-		&self,
-		request: Request<LoginRequest>
-	) -> Result<Response<LoginResponse, Status>> {
-		println!("Got a request: {:?}", request);
-		
-		let req = request.into_inner();
-
-		let reply = LoginResponse {
-			token: "Token"
-		};
-
-		Ok(Response::new(reply))
-	}
+	pub mod login;
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-	let address = "[::1]:50051";
+	let address = "[::1]:50051".parse()?;
 	let login_service: LoginService = LoginService::default();
 
 	Server::builder()
 		.add_service(LoginServer::new(login_service))
-		.serve(addr)
+		.serve(address)
 		.await?;
 
 	Ok(())

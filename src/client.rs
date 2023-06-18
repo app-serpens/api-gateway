@@ -6,19 +6,19 @@ pub mod auth {
 }
 
 #[tokio::main]
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
   let mut client = LoginClient::connect(
     "http://[::1]:50051"
   ).await?;
 
   let request = tonic::Request::new(
     LoginRequest {
-      email: "email",
-      password: "password"
+      email: String::from("email"),
+      password: String::from("password")
     }
   );
 
-  let response = client.test(request).await?;
+  let response = client.o_auth2(request).await?;
   println!("RESPONSE = {:?}", response);
   
   Ok(())
