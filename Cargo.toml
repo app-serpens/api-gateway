@@ -1,8 +1,26 @@
 [package]
-name = "auth"
+name = "api-gateway"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+actix = "0.13.0"
+actix-web = "4"
+chrono = { version = "0.4.26", features = ["serde"] }
+dotenv = "0.15.0"
+serde = { version = "1.0.166", features = ["derive"] }
+serde_json = "1.0.100"
+uuid = { version = "1.4.0", features = ["v4", "serde"] }
+diesel = { version = "2.1.0", features = ["postgres", "r2d2", "chrono", "uuid"] }
+r2d2 = "0.8.10"
+actix-diesel = { version = "0.3.0", features = ["actix-web"]}
+actix-web-httpauth = "0.8.0"
+hmac = "0.12.1"
+jwt = "0.16.0"
+sha2 = "0.10.7"
+serde_derive = "1.0.167"
+config = "0.13.3"
+lazy_static = "1.4.0"
+env_logger = "0.10.0"
