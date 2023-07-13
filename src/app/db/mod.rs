@@ -1,19 +1,15 @@
-use diesel::pg::PgConnection;
-use diesel::r2d2::ConnectionManager;
-use dotenv::dotenv;
 use std::env;
 
-pub type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
+use sea_orm::{Database, DatabaseConnection};
 
-pub struct AppState {
-  pub pool: DbPool,
-}
+pub mod models;
 
-pub fn get_pool() -> DbPool {
-  dotenv().ok();
-  let database_url: String = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-  let manager: ConnectionManager<PgConnection> = ConnectionManager::<PgConnection>::new(database_url);
-  r2d2::Pool::builder()
-      .build(manager)
-      .expect("Could not build connection pool")
+pub async fn get_pool() -> DatabaseConnection {
+    let database_url: String = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    match Database::connect(database_url).await {
+        Ok(connection) => connection,
+        Err(e) => {
+            panic!("Error connecting to database: {}", e);
+        }
+    }
 }

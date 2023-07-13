@@ -1,15 +1,13 @@
 use std::env;
 
-use actix_web::{HttpServer, App, web::Data};
+use crate::app::api::auth::login::login;
+use actix_web::{web::Data, App, HttpServer};
 use actix_web_httpauth::middleware::HttpAuthentication;
-use app::api::users::login;
 
 use dotenv::dotenv;
 
 extern crate actix;
 extern crate actix_web;
-#[macro_use]
-extern crate diesel;
 extern crate r2d2;
 #[macro_use]
 extern crate serde_derive;
@@ -19,7 +17,7 @@ extern crate lazy_static;
 extern crate config;
 
 pub mod app;
-pub mod schema;
+// pub mod schema;
 pub mod auth;
 
 #[actix_web::main]
@@ -28,7 +26,10 @@ async fn main() -> std::io::Result<()> {
     env::set_var("RUST_LOG", "actix_web=debug");
 
     let host: String = env::var("API_HOST").expect("API host not set");
-    let port: u16 = env::var("API_PORT").expect("API port not set").parse().unwrap();
+    let port: u16 = env::var("API_PORT")
+        .expect("API port not set")
+        .parse()
+        .unwrap();
 
     let pool = Data::new(crate::app::db::get_pool());
     println!("Listening to requests at {}:{}...", host, port);
@@ -40,7 +41,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(pool.clone())
             .configure(app::init::initialize)
             .service(login)
-        })
+    })
     .bind((host, port))?
     .run()
     .await
